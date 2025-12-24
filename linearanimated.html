@@ -95,17 +95,38 @@ function update(hex) {
     card.innerHTML = `<div class="gradient-meta"><h4>${g.title}</h4><div class="copy-css">Click to copy snippet</div></div>`;
     
     card.onclick = () => {
-      // THIS IS THE CLEAN CSS SNIPPET LOGIC
-      let snippet = `button {\n  ${g.css}\n  border-radius: 10px;\n  height: 2rem;\n  width: 8rem;\n  border: none;\n  color: white;\n  cursor: pointer;\n`;
-      if (g.animated) {
-        snippet += `  background-size: 300% 300%;\n  animation: fluid-flow 10s ease infinite;\n}\n\n@keyframes fluid-flow {\n  0% { background-position: 0% 50%; }\n  50% { background-position: 100% 50%; }\n  100% { background-position: 0% 50%; }\n}`;
-      } else {
-        snippet += `}`;
-      }
-      navigator.clipboard.writeText(snippet);
-      card.querySelector(".copy-css").innerText = "COPIED!";
-      setTimeout(() => card.querySelector(".copy-css").innerText = "Click to copy snippet", 2000);
-    };
+  const backgroundStyle = g.css;
+  const isAnimated = g.animated;
+
+  // Build the clean snippet for the body background
+  let cssSnippet = `/* --- ${g.title} Background --- */\n`;
+  cssSnippet += `body {\n`;
+  cssSnippet += `  margin: 0;\n`;
+  cssSnippet += `  min-height: 100vh;\n`; // Ensures background covers full height
+  cssSnippet += `  ${backgroundStyle}\n`;
+  
+  if (isAnimated) {
+    cssSnippet += `  background-size: 300% 300%;\n`;
+    cssSnippet += `  animation: fluid-flow 15s ease infinite;\n`; // Slower for backgrounds
+  }
+
+  cssSnippet += `  color: white;\n`;
+  cssSnippet += `}\n`;
+
+  if (isAnimated) {
+    cssSnippet += `\n@keyframes fluid-flow {\n`;
+    cssSnippet += `  0% { background-position: 0% 50%; }\n`;
+    cssSnippet += `  50% { background-position: 100% 50%; }\n`;
+    cssSnippet += `  100% { background-position: 0% 50%; }\n`;
+    cssSnippet += `}`;
+  }
+
+  navigator.clipboard.writeText(cssSnippet);
+
+  const label = card.querySelector(".copy-css");
+  label.innerText = "BACKGROUND CSS COPIED!";
+  setTimeout(() => label.innerText = "Click to copy snippet", 2000);
+};
     grid.appendChild(card);
   });
 }
